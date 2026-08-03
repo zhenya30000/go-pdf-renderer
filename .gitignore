@@ -1,0 +1,7 @@
+.env
+.idea/
+.vscode/
+coverage.out
+dist/
+*.pdf
+/pdf-generator

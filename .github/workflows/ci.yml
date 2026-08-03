@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+      - run: test -z "$(gofmt -l cmd internal)"
+      - run: go vet ./...
+      - run: go test -race -coverprofile=coverage.out ./...
+      - run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - run: go build -trimpath -o /tmp/pdf-generator-vuln ./cmd/pdf-generator
+      - run: govulncheck -mode=binary /tmp/pdf-generator-vuln
+      - name: Browser integration
+        run: go test -count=1 -run TestChromeRendererIntegration -v ./internal/pdf
+        env:
+          PDF_GENERATOR_INTEGRATION: "1"
+          CHROME_PATH: /usr/bin/google-chrome
+          CHROME_NO_SANDBOX: "true"
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.11.4
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: docker build -t pdf-generator:${{ github.sha }} .

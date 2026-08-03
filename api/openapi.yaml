@@ -1,0 +1,195 @@
+openapi: 3.1.0
+info:
+  title: PDF Generator API
+  version: 0.1.0
+  description: A bounded HTML-to-PDF service backed by headless Chrome.
+servers:
+  - url: http://localhost:3001
+paths:
+  /v1/pdf:
+    post:
+      operationId: generatePDF
+      summary: Render HTML as PDF
+      security:
+        - apiKey: []
+        - bearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateRequest"
+      responses:
+        "200":
+          description: Generated PDF
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/pdf:
+              schema:
+                type: string
+                contentMediaType: application/pdf
+                contentEncoding: base64
+        "400":
+          $ref: "#/components/responses/Problem"
+        "401":
+          $ref: "#/components/responses/Problem"
+        "413":
+          $ref: "#/components/responses/Problem"
+        "415":
+          $ref: "#/components/responses/Problem"
+        "500":
+          $ref: "#/components/responses/Problem"
+        "503":
+          $ref: "#/components/responses/Problem"
+        "504":
+          $ref: "#/components/responses/Problem"
+  /healthz:
+    get:
+      operationId: health
+      responses:
+        "200":
+          description: Process is alive
+  /readyz:
+    get:
+      operationId: readiness
+      responses:
+        "200":
+          description: Chrome is ready
+        "503":
+          $ref: "#/components/responses/Problem"
+  /version:
+    get:
+      operationId: version
+      responses:
+        "200":
+          description: Build information
+  /metrics:
+    get:
+      operationId: metrics
+      responses:
+        "200":
+          description: Prometheus text metrics
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    GenerateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - html
+      properties:
+        html:
+          type: string
+          minLength: 1
+        filename:
+          type: string
+          maxLength: 128
+        options:
+          $ref: "#/components/schemas/PDFOptions"
+    PDFOptions:
+      type: object
+      additionalProperties: false
+      properties:
+        format:
+          type: string
+          enum: [A4, Letter, Legal, Custom]
+          default: A4
+        width_mm:
+          type: number
+          minimum: 10
+          maximum: 2000
+        height_mm:
+          type: number
+          minimum: 10
+          maximum: 2000
+        landscape:
+          type: boolean
+          default: false
+        margins:
+          $ref: "#/components/schemas/Margins"
+        scale:
+          type: number
+          minimum: 0.1
+          maximum: 2
+          default: 1
+        print_background:
+          type: boolean
+          default: true
+        prefer_css_page_size:
+          type: boolean
+          default: true
+        header_template:
+          type: string
+          maxLength: 65536
+        footer_template:
+          type: string
+          maxLength: 65536
+        page_ranges:
+          type: string
+          examples: ["1-3, 5"]
+        tagged_pdf:
+          type: boolean
+        document_outline:
+          type: boolean
+        wait_until:
+          type: string
+          enum: [none, fonts, assets]
+          default: assets
+        render_delay:
+          type: string
+          examples: ["250ms", "1s"]
+    Margins:
+      type: object
+      additionalProperties: false
+      properties:
+        top_mm:
+          type: number
+          minimum: 0
+          maximum: 100
+        right_mm:
+          type: number
+          minimum: 0
+          maximum: 100
+        bottom_mm:
+          type: number
+          minimum: 0
+          maximum: 100
+        left_mm:
+          type: number
+          minimum: 0
+          maximum: 100
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+  responses:
+    Problem:
+      description: Request failed
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"

@@ -1,0 +1,20 @@
+services:
+  pdf-generator:
+    build:
+      context: .
+    ports:
+      - "3001:3001"
+    environment:
+      API_KEY: ${API_KEY:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+      ALLOWED_ASSET_HOSTS: ${ALLOWED_ASSET_HOSTS:-}
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    shm_size: 256mb
+    restart: unless-stopped
