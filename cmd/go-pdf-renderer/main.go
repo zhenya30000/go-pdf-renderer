@@ -33,6 +33,10 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		return fmt.Errorf("load config: %w", err)
 	}
+	openAPISpec, err := os.ReadFile(cfg.OpenAPIPath)
+	if err != nil {
+		return fmt.Errorf("read OpenAPI spec: %w", err)
+	}
 
 	renderer, err := pdf.NewChromeRenderer(context.Background(), pdf.ChromeConfig{
 		ExecutablePath:    cfg.ChromePath,
@@ -59,6 +63,7 @@ func run(logger *slog.Logger) error {
 		Version:         version,
 		Commit:          commit,
 		BuildDate:       buildDate,
+		OpenAPISpec:     openAPISpec,
 	})
 
 	server := &http.Server{

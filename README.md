@@ -19,6 +19,7 @@ The project focuses on predictable rendering, bounded resource usage, strict API
 - Remote assets denied by default with an exact-host allowlist
 - JavaScript disabled by default
 - Health, readiness, build information, and Prometheus metrics endpoints
+- Embedded Swagger UI for exploring and calling the API
 - Graceful shutdown and structured JSON logs
 - Unit, race, security-policy, and browser integration tests
 - Docker image, Compose setup, OpenAPI 3.1 contract, and GitHub Actions CI
@@ -41,6 +42,8 @@ CHROME_PATH=/usr/bin/google-chrome go run ./cmd/go-pdf-renderer
 ```
 
 If the local runtime cannot use the Chrome sandbox, set `CHROME_NO_SANDBOX=true`. Do this only inside an isolation boundary you control.
+
+Open [http://localhost:3001/docs/](http://localhost:3001/docs/) to inspect the contract and call the API from Swagger UI. If `API_KEY` is configured, use the **Authorize** button before sending a request.
 
 ## Generate a PDF
 
@@ -88,7 +91,7 @@ The compatibility endpoint `POST /generate-pdf` accepts the same request. New cl
 
 Asset readiness uses page-side promises and therefore applies when `ALLOW_JAVASCRIPT=true`. With JavaScript disabled, the document is printed after the DOM is ready plus any configured render delay.
 
-The complete contract is available in [api/openapi.yaml](api/openapi.yaml).
+The complete contract is available in [api/openapi.yaml](api/openapi.yaml) and from the running service at `GET /openapi.yaml`.
 
 ## Configuration
 
@@ -102,6 +105,7 @@ The complete contract is available in [api/openapi.yaml](api/openapi.yaml).
 | `ALLOWED_ASSET_HOSTS` | empty | Comma-separated exact remote hostnames |
 | `ALLOWED_ORIGINS` | empty | Comma-separated CORS origins |
 | `API_KEY` | empty | Accepted as `X-API-Key` or bearer token |
+| `OPENAPI_PATH` | `api/openapi.yaml` | OpenAPI contract loaded at startup |
 | `MAX_CONCURRENT_RENDERS` | `2` | Maximum active Chrome tabs |
 | `MAX_REQUEST_BYTES` | `2097152` | Maximum JSON request size |
 | `MAX_PDF_BYTES` | `20971520` | Maximum returned PDF size |
@@ -124,6 +128,8 @@ Durations use Go syntax such as `250ms`, `5s`, or `1m`.
 | `GET /readyz` | Chrome readiness |
 | `GET /version` | Version, commit, and build date |
 | `GET /metrics` | Prometheus text metrics |
+| `GET /docs/` | Interactive Swagger UI |
+| `GET /openapi.yaml` | OpenAPI 3.1 contract |
 
 ## Security
 

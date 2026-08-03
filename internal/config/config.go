@@ -16,6 +16,7 @@ type Config struct {
 	AllowedAssetHosts []string
 	AllowedOrigins    []string
 	APIKey            string
+	OpenAPIPath       string
 	MaxConcurrent     int
 	MaxRequestBytes   int64
 	MaxPDFBytes       int
@@ -35,6 +36,7 @@ func Load() (Config, error) {
 		Address:           value("ADDRESS", ":"+port),
 		ChromePath:        strings.TrimSpace(os.Getenv("CHROME_PATH")),
 		APIKey:            os.Getenv("API_KEY"),
+		OpenAPIPath:       value("OPENAPI_PATH", "api/openapi.yaml"),
 		AllowedAssetHosts: list("ALLOWED_ASSET_HOSTS"),
 		AllowedOrigins:    list("ALLOWED_ORIGINS"),
 	}

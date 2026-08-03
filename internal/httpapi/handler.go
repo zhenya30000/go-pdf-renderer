@@ -19,6 +19,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/swaggest/swgui/v5emb"
 	"github.com/zhenya3000/go-pdf-renderer/internal/pdf"
 )
 
@@ -36,6 +37,7 @@ type Config struct {
 	Version         string
 	Commit          string
 	BuildDate       string
+	OpenAPISpec     []byte
 }
 
 type API struct {
@@ -51,6 +53,7 @@ type API struct {
 	version         string
 	commit          string
 	buildDate       string
+	openAPISpec     []byte
 	metrics         metrics
 }
 
@@ -82,6 +85,7 @@ func New(cfg Config) http.Handler {
 		version:         cfg.Version,
 		commit:          cfg.Commit,
 		buildDate:       cfg.BuildDate,
+		openAPISpec:     cfg.OpenAPISpec,
 	}
 	if api.logger == nil {
 		api.logger = slog.Default()
@@ -105,6 +109,9 @@ func New(cfg Config) http.Handler {
 	router.Get("/readyz", api.ready)
 	router.Get("/version", api.versionInfo)
 	router.Get("/metrics", api.prometheusMetrics)
+	router.Get("/openapi.yaml", api.openAPI)
+	router.Get("/docs", http.RedirectHandler("/docs/", http.StatusPermanentRedirect).ServeHTTP)
+	router.Handle("/docs/*", v5emb.New("Go PDF Renderer API", "/openapi.yaml", "/docs/"))
 	router.Post("/v1/pdf", api.generate)
 	router.Post("/generate-pdf", api.generate)
 	return router

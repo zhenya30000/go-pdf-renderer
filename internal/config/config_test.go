@@ -14,6 +14,9 @@ func TestLoadDefaults(t *testing.T) {
 	if cfg.Address != ":3001" || cfg.MaxConcurrent != 2 {
 		t.Fatalf("unexpected defaults: %+v", cfg)
 	}
+	if cfg.OpenAPIPath != "api/openapi.yaml" {
+		t.Fatalf("unexpected OpenAPI path: %s", cfg.OpenAPIPath)
+	}
 	if cfg.MaxRequestBytes != 2<<20 || cfg.MaxPDFBytes != 20<<20 {
 		t.Fatalf("unexpected limits: %+v", cfg)
 	}
@@ -27,6 +30,7 @@ func TestLoadCustomValues(t *testing.T) {
 	t.Setenv("PORT", "8080")
 	t.Setenv("MAX_CONCURRENT_RENDERS", "4")
 	t.Setenv("QUEUE_TIMEOUT", "2s")
+	t.Setenv("OPENAPI_PATH", "/etc/go-pdf-renderer/openapi.yaml")
 	t.Setenv("ALLOWED_ASSET_HOSTS", "CDN.EXAMPLE.COM, cdn.example.com, fonts.example.com")
 	cfg, err := Load()
 	if err != nil {
@@ -34,6 +38,9 @@ func TestLoadCustomValues(t *testing.T) {
 	}
 	if cfg.Address != ":8080" || cfg.MaxConcurrent != 4 || cfg.QueueTimeout != 2*time.Second {
 		t.Fatalf("unexpected config: %+v", cfg)
+	}
+	if cfg.OpenAPIPath != "/etc/go-pdf-renderer/openapi.yaml" {
+		t.Fatalf("unexpected OpenAPI path: %s", cfg.OpenAPIPath)
 	}
 	if len(cfg.AllowedAssetHosts) != 2 || cfg.AllowedAssetHosts[0] != "cdn.example.com" {
 		t.Fatalf("unexpected hosts: %v", cfg.AllowedAssetHosts)
@@ -77,7 +84,7 @@ func clearEnvironment(t *testing.T) {
 		"ALLOWED_ASSET_HOSTS", "ALLOWED_ORIGINS", "API_KEY", "MAX_CONCURRENT_RENDERS",
 		"MAX_REQUEST_BYTES", "MAX_PDF_BYTES", "QUEUE_TIMEOUT", "RENDER_TIMEOUT",
 		"READY_TIMEOUT", "READ_HEADER_TIMEOUT", "READ_TIMEOUT", "WRITE_TIMEOUT",
-		"IDLE_TIMEOUT", "SHUTDOWN_TIMEOUT",
+		"IDLE_TIMEOUT", "SHUTDOWN_TIMEOUT", "OPENAPI_PATH",
 	} {
 		t.Setenv(name, "")
 	}

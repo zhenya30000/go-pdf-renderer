@@ -166,11 +166,43 @@ func TestSystemEndpoints(t *testing.T) {
 		cfg.Commit = "abc"
 		cfg.BuildDate = "today"
 	}))
-	for _, path := range []string{"/healthz", "/readyz", "/version", "/metrics"} {
+	for _, path := range []string{"/healthz", "/readyz", "/version", "/metrics", "/openapi.yaml"} {
 		recorder := perform(handler, http.MethodGet, path, "", nil)
 		if recorder.Code != http.StatusOK {
 			t.Fatalf("%s: got %d, body %s", path, recorder.Code, recorder.Body.String())
 		}
+	}
+}
+
+func TestOpenAPI(t *testing.T) {
+	handler := testHandler(fakeRenderer{})
+	recorder := perform(handler, http.MethodGet, "/openapi.yaml", "", nil)
+	if recorder.Header().Get("Content-Type") != "application/yaml; charset=utf-8" {
+		t.Fatalf("unexpected content type: %s", recorder.Header().Get("Content-Type"))
+	}
+	if recorder.Body.String() != "openapi: 3.1.0\n" {
+		t.Fatalf("unexpected spec: %s", recorder.Body.String())
+	}
+}
+
+func TestSwaggerUI(t *testing.T) {
+	handler := testHandler(fakeRenderer{})
+	redirect := perform(handler, http.MethodGet, "/docs", "", nil)
+	if redirect.Code != http.StatusPermanentRedirect || redirect.Header().Get("Location") != "/docs/" {
+		t.Fatalf("unexpected redirect: status %d, location %s", redirect.Code, redirect.Header().Get("Location"))
+	}
+
+	page := perform(handler, http.MethodGet, "/docs/", "", nil)
+	if page.Code != http.StatusOK {
+		t.Fatalf("status: got %d, body %s", page.Code, page.Body.String())
+	}
+	if !strings.Contains(page.Body.String(), "/openapi.yaml") {
+		t.Fatalf("OpenAPI URL is missing: %s", page.Body.String())
+	}
+
+	stylesheet := perform(handler, http.MethodGet, "/docs/swagger-ui.css", "", nil)
+	if stylesheet.Code != http.StatusOK || !strings.Contains(stylesheet.Header().Get("Content-Type"), "text/css") {
+		t.Fatalf("unexpected stylesheet response: status %d, content type %s", stylesheet.Code, stylesheet.Header().Get("Content-Type"))
 	}
 }
 
@@ -217,6 +249,7 @@ func testConfig(renderer pdf.Renderer, change func(*Config)) Config {
 		Version:         "dev",
 		Commit:          "none",
 		BuildDate:       "unknown",
+		OpenAPISpec:     []byte("openapi: 3.1.0\n"),
 	}
 	if change != nil {
 		change(&cfg)

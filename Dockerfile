@@ -16,10 +16,12 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,t
 RUN useradd --create-home --uid 10001 app
 
 COPY --from=build /out/go-pdf-renderer /usr/local/bin/go-pdf-renderer
+COPY api/openapi.yaml /usr/local/share/go-pdf-renderer/openapi.yaml
 
 ENV ADDRESS=:3001
 ENV CHROME_PATH=/usr/bin/chromium-headless-shell
 ENV CHROME_NO_SANDBOX=true
+ENV OPENAPI_PATH=/usr/local/share/go-pdf-renderer/openapi.yaml
 
 USER app
 EXPOSE 3001

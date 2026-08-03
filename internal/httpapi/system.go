@@ -50,6 +50,12 @@ func (a *API) prometheusMetrics(w http.ResponseWriter, _ *http.Request) {
 	_, _ = fmt.Fprintf(w, "go_pdf_renderer_render_duration_seconds_total %f\n", float64(a.metrics.renderDurationNanoseconds.Load())/float64(time.Second))
 }
 
+func (a *API) openAPI(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "application/yaml; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-cache")
+	_, _ = w.Write(a.openAPISpec)
+}
+
 func writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
