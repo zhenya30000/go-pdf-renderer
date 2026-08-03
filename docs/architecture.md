@@ -21,7 +21,7 @@ Chrome DevTools PrintToPDF
 bounded PDF response
 ```
 
-`cmd/pdf-generator` owns process lifecycle and graceful shutdown. `internal/config` converts environment variables into validated configuration. `internal/httpapi` owns the HTTP contract, authentication, concurrency limits, timeouts, metrics, and error responses. `internal/pdf` owns option validation, browser lifecycle, resource interception, asset readiness, and PDF generation.
+`cmd/go-pdf-renderer` owns process lifecycle and graceful shutdown. `internal/config` converts environment variables into validated configuration. `internal/httpapi` owns the HTTP contract, authentication, concurrency limits, timeouts, metrics, and error responses. `internal/pdf` owns option validation, browser lifecycle, resource interception, asset readiness, and PDF generation.
 
 A browser process is reused to avoid cold startup on every request. Each render gets a separate tab. Request cancellation is bridged into the tab context. The HTTP layer limits concurrent tabs and rejects requests that exceed the configured queue timeout.
 

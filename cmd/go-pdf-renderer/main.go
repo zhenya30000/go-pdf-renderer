@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/zhenya3000/pdf-generator/internal/config"
-	"github.com/zhenya3000/pdf-generator/internal/httpapi"
-	"github.com/zhenya3000/pdf-generator/internal/pdf"
+	"github.com/zhenya3000/go-pdf-renderer/internal/config"
+	"github.com/zhenya3000/go-pdf-renderer/internal/httpapi"
+	"github.com/zhenya3000/go-pdf-renderer/internal/pdf"
 )
 
 var version = "dev"

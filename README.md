@@ -1,7 +1,7 @@
-# PDF Generator
+# Go PDF Renderer
 
-[![CI](https://github.com/zhenya3000/pdf-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/zhenya3000/pdf-generator/actions/workflows/ci.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/zhenya3000/pdf-generator.svg)](https://pkg.go.dev/github.com/zhenya3000/pdf-generator)
+[![CI](https://github.com/zhenya3000/go-pdf-renderer/actions/workflows/ci.yml/badge.svg)](https://github.com/zhenya3000/go-pdf-renderer/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/zhenya3000/go-pdf-renderer.svg)](https://pkg.go.dev/github.com/zhenya3000/go-pdf-renderer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A small, production-minded HTML-to-PDF service written in Go and backed by headless Chrome.
@@ -37,7 +37,7 @@ docker compose up --build
 Install Go 1.25 or newer and Chrome or Chromium.
 
 ```bash
-CHROME_PATH=/usr/bin/google-chrome go run ./cmd/pdf-generator
+CHROME_PATH=/usr/bin/google-chrome go run ./cmd/go-pdf-renderer
 ```
 
 If the local runtime cannot use the Chrome sandbox, set `CHROME_NO_SANDBOX=true`. Do this only inside an isolation boundary you control.
@@ -142,7 +142,7 @@ make vet
 make integration
 ```
 
-The browser integration test is skipped unless `PDF_GENERATOR_INTEGRATION=1` is set.
+The browser integration test is skipped unless `GO_PDF_RENDERER_INTEGRATION=1` is set.
 
 The architecture is described in [docs/architecture.md](docs/architecture.md). Contribution guidelines are in [CONTRIBUTING.md](CONTRIBUTING.md).
 

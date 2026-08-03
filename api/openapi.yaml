@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: PDF Generator API
+  title: Go PDF Renderer API
   version: 0.1.0
   description: A bounded HTML-to-PDF service backed by headless Chrome.
 servers:

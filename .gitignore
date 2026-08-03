@@ -4,4 +4,4 @@
 coverage.out
 dist/
 *.pdf
-/pdf-generator
+/go-pdf-renderer

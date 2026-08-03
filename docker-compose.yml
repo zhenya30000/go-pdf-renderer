@@ -1,5 +1,5 @@
 services:
-  pdf-generator:
+  go-pdf-renderer:
     build:
       context: .
     ports:

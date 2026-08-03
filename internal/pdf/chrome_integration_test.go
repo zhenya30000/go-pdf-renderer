@@ -9,8 +9,8 @@ import (
 )
 
 func TestChromeRendererIntegration(t *testing.T) {
-	if os.Getenv("PDF_GENERATOR_INTEGRATION") != "1" {
-		t.Skip("set PDF_GENERATOR_INTEGRATION=1 to run")
+	if os.Getenv("GO_PDF_RENDERER_INTEGRATION") != "1" {
+		t.Skip("set GO_PDF_RENDERER_INTEGRATION=1 to run")
 	}
 	for _, test := range []struct {
 		name         string

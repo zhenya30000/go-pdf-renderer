@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zhenya3000/pdf-generator/internal/pdf"
+	"github.com/zhenya3000/go-pdf-renderer/internal/pdf"
 )
 
 type fakeRenderer struct {

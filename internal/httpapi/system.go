@@ -42,12 +42,12 @@ func (a *API) versionInfo(w http.ResponseWriter, _ *http.Request) {
 
 func (a *API) prometheusMetrics(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
-	_, _ = fmt.Fprintf(w, "pdf_generator_requests_total %d\n", a.metrics.requests.Load())
-	_, _ = fmt.Fprintf(w, "pdf_generator_successes_total %d\n", a.metrics.successes.Load())
-	_, _ = fmt.Fprintf(w, "pdf_generator_errors_total %d\n", a.metrics.errors.Load())
-	_, _ = fmt.Fprintf(w, "pdf_generator_timeouts_total %d\n", a.metrics.timeouts.Load())
-	_, _ = fmt.Fprintf(w, "pdf_generator_renders_in_flight %d\n", a.metrics.inFlight.Load())
-	_, _ = fmt.Fprintf(w, "pdf_generator_render_duration_seconds_total %f\n", float64(a.metrics.renderDurationNanoseconds.Load())/float64(time.Second))
+	_, _ = fmt.Fprintf(w, "go_pdf_renderer_requests_total %d\n", a.metrics.requests.Load())
+	_, _ = fmt.Fprintf(w, "go_pdf_renderer_successes_total %d\n", a.metrics.successes.Load())
+	_, _ = fmt.Fprintf(w, "go_pdf_renderer_errors_total %d\n", a.metrics.errors.Load())
+	_, _ = fmt.Fprintf(w, "go_pdf_renderer_timeouts_total %d\n", a.metrics.timeouts.Load())
+	_, _ = fmt.Fprintf(w, "go_pdf_renderer_renders_in_flight %d\n", a.metrics.inFlight.Load())
+	_, _ = fmt.Fprintf(w, "go_pdf_renderer_render_duration_seconds_total %f\n", float64(a.metrics.renderDurationNanoseconds.Load())/float64(time.Second))
 }
 
 func writeJSON(w http.ResponseWriter, status int, value any) {

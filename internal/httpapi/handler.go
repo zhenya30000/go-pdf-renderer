@@ -19,7 +19,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/zhenya3000/pdf-generator/internal/pdf"
+	"github.com/zhenya3000/go-pdf-renderer/internal/pdf"
 )
 
 type Config struct {
